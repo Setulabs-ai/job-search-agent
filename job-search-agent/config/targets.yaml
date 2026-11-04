@@ -1,0 +1,11 @@
+# Companies and job boards the phase00 market-watcher agent checks each
+# run. Ship your own list here -- these are placeholder examples.
+companies:
+  - name: "Example AI Co"
+    careers_url: "https://example-ai.com/careers"
+  - name: "Example Platform Co"
+    careers_url: "https://example-platform.com/jobs"
+
+boards:
+  - name: "Example Job Board"
+    search_url: "https://exampleboard.com/search?q=product+manager+ai"

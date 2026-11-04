@@ -1,0 +1,22 @@
+# Real personal state -- never committed. The agent reads/writes these at
+# runtime; only the sanitized templates under examples/ are tracked in git.
+state/*.md
+state/*.csv
+!state/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+
+# Env
+.env
+
+# OS / editor
+.DS_Store
+.vscode/
+.pytest_cache/

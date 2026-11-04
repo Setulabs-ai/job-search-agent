@@ -1,0 +1,51 @@
+name: Scheduled agent runs
+
+# Mirrors the cadence this system actually ran on in production (as Claude
+# Cowork scheduled tasks) before being ported to this standalone repo:
+# phase00 daily, phase01 weekly, phase04 daily. Commits any state changes
+# back to the repo so the queues/tracker stay versioned.
+#
+# Requires an ANTHROPIC_API_KEY repo secret. State lives under state/ --
+# make sure that path is NOT gitignored in your own fork if you want runs
+# committed (this template repo gitignores it on purpose; see README).
+
+on:
+  schedule:
+    - cron: "30 2 * * *"   # ~08:00 IST daily -- phase00 + phase04
+    - cron: "30 3 * * 1"   # ~09:00 IST Monday -- phase01
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: "Phase to run (phase00 / phase01 / phase04)"
+        required: true
+        default: "phase00"
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Run phase (manual dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: job-search-agent run ${{ inputs.phase }}
+      - name: Run daily phases (scheduled)
+        if: github.event_name == 'schedule'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          job-search-agent run phase00
+          job-search-agent run phase04
+      - name: Commit updated state
+        if: always()
+        run: |
+          git config user.name "job-search-agent bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add state/ || true
+          git diff --cached --quiet || git commit -m "chore: scheduled agent run $(date -u +%F)"
+          git push || true

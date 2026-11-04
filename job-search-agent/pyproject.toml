@@ -1,0 +1,25 @@
+[project]
+name = "job-search-agent"
+version = "0.1.0"
+description = "A small multi-agent system (Claude Agent SDK) that runs a PM job search: sources postings, drafts proof-of-work content, and chases silent applications -- with a hard line between what runs unattended and what always stays a human click."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Ankit Kumar" }]
+dependencies = [
+    "claude-agent-sdk>=0.2.100",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+job-search-agent = "job_search_agent.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

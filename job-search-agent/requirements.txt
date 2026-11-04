@@ -1,0 +1,3 @@
+claude-agent-sdk>=0.2.100
+pyyaml>=6.0
+pytest>=8.0
